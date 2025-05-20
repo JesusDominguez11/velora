@@ -37,3 +37,31 @@ npm run build
 ```sh
 npm run lint
 ```
+
+# Docker Setup
+
+## Prerequisites
+
+- Docker 20.10+ installed
+- Docker Compose 2.0+
+- Node.js 18+ (only required for local development without Docker)
+
+## Quick Start
+
+### Development Environment
+
+```bash
+# Start development server with hot-reload
+docker-compose up frontend-dev
+```
+
+Access the app at: [http://localhost:5173]http://localhost:5173
+
+### Production Build
+
+```bash
+# Build and run production container
+docker-compose up frontend-prod --build
+```
+
+Access the production app at: [http://localhost:8080]http://localhost:8080
