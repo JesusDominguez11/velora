@@ -55,7 +55,7 @@ npm run lint
 docker-compose up frontend-dev
 ```
 
-Access the app at: [http://localhost:5173]http://localhost:5173
+Access the app at: [http://localhost:5173](http://localhost:5173)
 
 ### Production Build
 
@@ -64,4 +64,4 @@ Access the app at: [http://localhost:5173]http://localhost:5173
 docker-compose up frontend-prod --build
 ```
 
-Access the production app at: [http://localhost:8080]http://localhost:8080
+Access the production app at: [http://localhost:8080](http://localhost:8080)
