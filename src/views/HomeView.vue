@@ -1,31 +1,25 @@
 <template>
-  <div>
-    <PreloaderComponent />
-    <div class="home-view">
-      <Navbar />
-      <HeroSection />
-    </div>
+  <div class="home">
+    <PreloaderHeader />
+    <Preloader />
+    <!-- Your other home content here -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Navbar from '@/components/Navbar.vue'
-import HeroSection from '@/components/HeroSection.vue'
-import PreloaderComponent from '@/components/Preloader.vue'
+import { defineComponent } from 'vue';
+import { Preloader, PreloaderHeader } from '@/components/preloader';
 
 export default defineComponent({
   name: 'HomeView',
   components: {
-    PreloaderComponent,
-    Navbar,
-    HeroSection
+    Preloader,
+    PreloaderHeader
   }
-})
+});
 </script>
 
-<style lang="scss">
-.home-view {
-  position: relative;
-}
+<style>
+/* Global styles that should be applied to the entire app */
+/* These are already included in the Preloader component */
 </style>
