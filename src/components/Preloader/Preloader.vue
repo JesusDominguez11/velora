@@ -17,7 +17,8 @@
             <img src="https://cdn.cosmos.so/e9b9e7dc-73f5-4f7c-bbb3-ad2e3589bda0?format=jpeg" alt="Preloader Image 4">
           </div>
           <div id="image-100" class="image-wrapper">
-            <img src="https://cdn.cosmos.so/5b5c5242-4598-4d51-9891-0e90eeef6727?format=jpeg" alt="Preloader Image 5">
+            <HeroSection></HeroSection>
+            <!-- <img src="https://cdn.cosmos.so/5b5c5242-4598-4d51-9891-0e90eeef6727?format=jpeg" alt="Preloader Image 5"> -->
           </div>
         </div>
         <div class="preloader-percentage" ref="percentageElement">0</div>
@@ -49,11 +50,11 @@
     </div>
 
     <!-- Hero Text (Big Title) -->
-    <div class="big-title">
+    <!-- <div class="big-title">
       <div class="title-line"><span>WINNING</span></div>
       <div class="title-line"><span>MINDSET</span></div>
       <div class="title-line"><span>ALWAYS</span></div>
-    </div>
+    </div> -->
 
     <!-- Restart Button -->
     <button class="restart-btn" ref="restartBtn">
@@ -81,11 +82,13 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { gsap } from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
+import HeroSection from '../HeroSection.vue';
 
 gsap.registerPlugin(CustomEase);
 
 export default defineComponent({
   name: 'Preloader',
+  components: { HeroSection },
   setup() {
     const preloader = ref<HTMLElement | null>(null);
     const imageContainer = ref<HTMLElement | null>(null);
@@ -964,7 +967,7 @@ body::before {
     width: 300px !important;
     height: 300px !important;
     margin-bottom: 2rem;
-    position: unset;
+    /* position: unset; */
   }
 
   .preloader-percentage {
