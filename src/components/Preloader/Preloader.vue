@@ -947,4 +947,86 @@ body::before {
   background-color: white;
   opacity: 0;
 }
+
+/* Media queries para móviles */
+@media (max-width: 768px) {
+  html {
+    font-size: calc(100vw / 375 * 10);
+  }
+
+  .preloader-content {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 20vh;
+  }
+
+  .image-container {
+    width: 300px !important;
+    height: 300px !important;
+    margin-bottom: 2rem;
+  }
+
+  .preloader-percentage {
+    font-size: 8rem !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 15% !important;
+    text-align: center;
+  }
+
+  .text-container,
+  .text-container-final {
+    position: static !important;
+    transform: none !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    padding: 0 2rem;
+    margin-top: 2rem;
+  }
+
+  .text-line,
+  .text-line-final {
+    font-size: 1.4rem !important;
+    text-align: center !important;
+    padding: 0.2em 0 !important;
+  }
+
+  .big-title {
+    bottom: 10px !important;
+    left: 10px !important;
+    font-size: 5rem !important;
+  }
+
+  .restart-btn {
+    bottom: 20px !important;
+    right: 20px !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .nav-center li {
+    font-size: 1.6rem !important;
+  }
+
+  .logo-left,
+  .nav-right {
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    width: 250px !important;
+    height: 250px !important;
+  }
+
+  .preloader-percentage {
+    font-size: 6rem !important;
+    bottom: 20% !important;
+  }
+
+  .big-title {
+    font-size: 4rem !important;
+  }
+}
 </style>
