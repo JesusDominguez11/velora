@@ -964,6 +964,7 @@ body::before {
     width: 300px !important;
     height: 300px !important;
     margin-bottom: 2rem;
+    position: unset;
   }
 
   .preloader-percentage {
