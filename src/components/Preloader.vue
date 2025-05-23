@@ -1,52 +1,61 @@
 <template>
   <div>
     <!-- Preloader -->
-    <div class="preloader" v-show="showPreloader">
+    <div class="preloader" v-if="!isLoaded">
       <div class="preloader-content">
         <div class="image-container">
           <div
-            v-for="(image, index) in preloaderImages"
+            v-for="(image, index) in images"
             :key="index"
             :id="`image-${image.percentage}`"
             class="image-wrapper"
-            ref="imageWrappers"
           >
             <img :src="image.src" :alt="`Preloader Image ${index + 1}`">
           </div>
         </div>
         <div class="preloader-percentage">{{ currentPercentage }}</div>
       </div>
+
+      <!-- Text Lines Container (Preloader) -->
+      <div class="text-container">
+        <div
+          v-for="(line, index) in preloaderLines"
+          :key="`pre-${index}`"
+          class="text-line"
+          :style="{ opacity: textLineOpacity[index] }"
+        >
+          {{ line }}
+        </div>
+      </div>
     </div>
 
-    <!-- Contenido principal (se muestra después del preloader) -->
-    <div v-show="!showPreloader">
+    <!-- Main Content (shown after preloader) -->
+    <div v-if="isLoaded">
       <!-- Header Navigation -->
       <header class="header">
         <div class="logo-left">REDUCE</div>
         <nav class="nav-center">
           <ul>
-            <li>FOCUS</li>
-            <li>CLARITY</li>
-            <li>SIMPLIFY</li>
-            <li>TRUTH</li>
+            <li v-for="(item, index) in navItems" :key="index">{{ item }}</li>
           </ul>
         </nav>
         <div class="nav-right">+GET IN TOUCH</div>
       </header>
 
-      <!-- Text Lines Container (Preloader) -->
-      <div class="text-container">
-        <div class="text-line" v-for="(line, index) in preloaderLines" :key="'preloader-' + index">{{ line }}</div>
-      </div>
-
-      <!-- Text Lines Container (Final) -->
+      <!-- Final Content -->
       <div class="text-container-final">
-        <div class="text-line-final" v-for="(line, index) in finalLines" :key="'final-' + index">{{ line }}</div>
+        <div
+          v-for="(line, index) in finalLines"
+          :key="`final-${index}`"
+          class="text-line-final"
+        >
+          {{ line }}
+        </div>
       </div>
 
       <!-- Hero Text (Big Title) -->
       <div class="big-title">
-        <div class="title-line" v-for="(line, index) in titleLines" :key="'title-' + index">
+        <div class="title-line" v-for="(line, index) in titleLines" :key="`title-${index}`">
           <span>{{ line }}</span>
         </div>
       </div>
@@ -55,8 +64,12 @@
       <button class="restart-btn" @click="restartAnimation">
         <div class="dot-container">
           <!-- Initial 4 dots -->
-          <div class="dot" v-for="n in 8" :key="'dot-' + n"></div>
-          <!-- Center dot -->
+          <div class="dot" v-for="i in 4" :key="`dot-${i}`"></div>
+
+          <!-- Additional 4 dots (hidden initially) -->
+          <div class="dot" v-for="i in 4" :key="`dot-add-${i}`"></div>
+
+          <!-- Center dot (hidden initially) -->
           <div class="center-dot"></div>
         </div>
       </button>
@@ -64,68 +77,76 @@
   </div>
 </template>
 
+
 <script lang="ts">
+import { defineComponent, onMounted, ref } from 'vue';
 import { gsap } from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
 
-export default {
-  name: 'PreloaderComponent',
-  data() {
-    return {
-      showPreloader: true,
-      currentPercentage: 0,
-      preloaderImages: [
-        { percentage: 0, src: 'https://cdn.cosmos.so/4900e2ad-dfdb-4f6a-8ca8-6700144e6c89?format=jpeg' },
-        { percentage: 20, src: 'https://cdn.cosmos.so/acdef0b0-0321-4f80-9ab0-7932ccb88554?format=jpeg' },
-        { percentage: 60, src: 'https://cdn.cosmos.so/09eb737d-c269-4fa6-a77c-4ada27419be0?format=jpeg' },
-        { percentage: 80, src: 'https://cdn.cosmos.so/e9b9e7dc-73f5-4f7c-bbb3-ad2e3589bda0?format=jpeg' },
-        { percentage: 100, src: 'https://cdn.cosmos.so/5b5c5242-4598-4d51-9891-0e90eeef6727?format=jpeg' }
-      ],
-      preloaderLines: [
-        "Winning is a habit.",
-        "Champions are made daily.",
-        "Obstacles fuel growth.",
-        "The mind conquers first.",
-        "Success demands sacrifice.",
-        "Greatness never rests.",
-        "Victory is earned.",
-        "Persistence prevails."
-      ],
-      finalLines: [
-        "Embrace the challenge.",
-        "Find your purpose.",
-        "Commit to excellence.",
-        "Trust the process.",
-        "Silence the doubters.",
-        "Rise above fear.",
-        "Own your destiny.",
-        "Leave a legacy."
-      ],
-      titleLines: [
-        "WINNING",
-        "MINDSET",
-        "ALWAYS"
-      ],
-      mainTl: null
-    };
-  },
-  mounted() {
-    gsap.registerPlugin(CustomEase);
+gsap.registerPlugin(CustomEase);
 
-    // Crear funciones de easing personalizadas
+export default defineComponent({
+  name: 'PreloaderComponent',
+  setup() {
+    const isLoaded = ref(false);
+    const currentPercentage = ref(0);
+    const textLineOpacity = ref<number[]>([]);
+
+    // Data
+    const images = [
+      { percentage: 0, src: 'https://cdn.cosmos.so/4900e2ad-dfdb-4f6a-8ca8-6700144e6c89?format=jpeg' },
+      { percentage: 20, src: 'https://cdn.cosmos.so/acdef0b0-0321-4f80-9ab0-7932ccb88554?format=jpeg' },
+      { percentage: 60, src: 'https://cdn.cosmos.so/09eb737d-c269-4fa6-a77c-4ada27419be0?format=jpeg' },
+      { percentage: 80, src: 'https://cdn.cosmos.so/e9b9e7dc-73f5-4f7c-bbb3-ad2e3589bda0?format=jpeg' },
+      { percentage: 100, src: 'https://cdn.cosmos.so/5b5c5242-4598-4d51-9891-0e90eeef6727?format=jpeg' }
+    ];
+
+    const preloaderLines = [
+      'Winning is a habit.',
+      'Champions are made daily.',
+      'Obstacles fuel growth.',
+      'The mind conquers first.',
+      'Success demands sacrifice.',
+      'Greatness never rests.',
+      'Victory is earned.',
+      'Persistence prevails.'
+    ];
+
+    const finalLines = [
+      'Embrace the challenge.',
+      'Find your purpose.',
+      'Commit to excellence.',
+      'Trust the process.',
+      'Silence the doubters.',
+      'Rise above fear.',
+      'Own your destiny.',
+      'Leave a legacy.'
+    ];
+
+    const titleLines = ['WINNING', 'MINDSET', 'ALWAYS'];
+    const navItems = ['FOCUS', 'CLARITY', 'SIMPLIFY', 'TRUTH'];
+
+    // Initialize text line opacities
+    textLineOpacity.value = new Array(preloaderLines.length).fill(0);
+
+    // Animation timeline
+    let mainTl: gsap.core.Timeline;
+
+    // Create custom easing functions
     CustomEase.create("customEase", "0.6, 0.01, 0.05, 1");
     CustomEase.create("blurEase", "0.25, 0.1, 0.25, 1");
     CustomEase.create("counterEase", "0.35, 0.0, 0.15, 1");
     CustomEase.create("gentleIn", "0.38, 0.005, 0.215, 1");
 
-    this.initAnimation();
-    this.setupRestartButton();
-  },
-  methods: {
-    initAnimation() {
-      if (this.mainTl) this.mainTl.kill();
+    const initAnimation = () => {
+      if (mainTl) mainTl.kill();
 
-      // Resetear elementos
+      // Reset states
+      isLoaded.value = false;
+      currentPercentage.value = 0;
+      textLineOpacity.value = new Array(preloaderLines.length).fill(0);
+
+      // Ensure restart button and header are hidden initially
       gsap.set(".restart-btn", { opacity: 0, pointerEvents: "none" });
       gsap.set(".header", { opacity: 1 });
       gsap.set(".logo-left", { opacity: 0, y: 10 });
@@ -137,30 +158,29 @@ export default {
       gsap.set(".big-title .title-line span", { y: "100%", opacity: 0 });
 
       const percentages = [0, 20, 60, 80, 99];
-      const wrappers = this.$refs.imageWrappers;
-
+      const wrappers = percentages.map(p => document.getElementById(`image-${p}`));
       const percentageElement = document.querySelector(".preloader-percentage");
       const imageContainer = document.querySelector(".image-container");
       const finalWrapper = document.getElementById("image-100");
-      const finalImage = finalWrapper ? finalWrapper.querySelector("img") : null;
+      const finalImage = finalWrapper?.querySelector("img");
 
-      // Resetear wrappers y dimensiones del contenedor
-      gsap.set(wrappers, { visibility: "hidden", clipPath: "inset(100% 0 0 0)" });
-      gsap.set(wrappers[0], { visibility: "visible" });
+      // Reset wrappers and container dimensions
+      gsap.set(wrappers, { visibility: "hidden", clipPath: "inset(100% 0 0 0" });
+      if (wrappers[0]) gsap.set(wrappers[0], { visibility: "visible" });
       gsap.set(imageContainer, { width: "400px", height: "500px" });
       gsap.set(".image-wrapper img", {
         scale: 1.2,
         transformOrigin: "center center"
       });
 
-      // Configurar preloader
+      // Set preloader overlay to start with solid black background
       gsap.set(".preloader", { display: "flex", opacity: 1, y: 0 });
-      document.querySelector(".preloader").style.backgroundColor = "#000";
+      document.querySelector(".preloader")?.style.setProperty('background-color', '#000');
 
-      this.mainTl = gsap.timeline();
+      mainTl = gsap.timeline();
 
-      // Animación de líneas de texto
-      this.mainTl.to(
+      // Animate text lines in
+      mainTl.to(
         ".text-line",
         {
           opacity: 1,
@@ -171,8 +191,8 @@ export default {
         0.5
       );
 
-      // Cambiar color de líneas de texto
-      this.mainTl.to(
+      // Change color of text lines
+      mainTl.to(
         ".text-line",
         {
           color: "#fff",
@@ -183,7 +203,7 @@ export default {
         "+=0.5"
       );
 
-      // Sincronización para cambios de imagen y actualizaciones de porcentaje
+      // Improved synchronization for image changes and percentage updates
       percentages.forEach((percentage, index) => {
         const windowWidth = window.innerWidth;
         const fontSizeRem = 14;
@@ -202,14 +222,14 @@ export default {
           leftPosition = padding + (availableWidth * percentage) / 100 + "px";
         }
 
-        // Crear una etiqueta sincronizada para este paso
-        this.mainTl.add(`step${percentage}`, index * 1.5);
+        // Create a synchronized label for this step
+        mainTl.add(`step${percentage}`, index * 1.5);
 
-        // Configurar wrapper de imagen como visible
-        this.mainTl.set(wrappers[index], { visibility: "visible" }, `step${percentage}`);
+        // Set image wrapper to visible
+        mainTl.set(wrappers[index], { visibility: "visible" }, `step${percentage}`);
 
-        // Animación de revelación de imagen y cambio de porcentaje
-        this.mainTl.to(
+        // Animate image reveal and percentage change simultaneously
+        mainTl.to(
           wrappers[index],
           {
             clipPath: "inset(0% 0 0 0)",
@@ -219,30 +239,35 @@ export default {
           `step${percentage}`
         );
 
-        // Actualizar porcentaje
-        this.mainTl.to(
+        // Update percentage value
+        mainTl.to(
           this,
           {
             currentPercentage: percentage,
             duration: 0.65,
             ease: "counterEase",
             onUpdate: () => {
-              percentageElement.innerText = this.currentPercentage;
-              percentageElement.style.left = leftPosition;
-
-              gsap.fromTo(
-                percentageElement,
-                { filter: "blur(8px)" },
-                { filter: "blur(0px)", duration: 0.5, ease: "power2.inOut" }
-              );
+              if (percentageElement) {
+                percentageElement.textContent = `${currentPercentage.value}`;
+                percentageElement.style.left = leftPosition;
+              }
+            },
+            onStart: () => {
+              if (percentageElement) {
+                gsap.fromTo(
+                  percentageElement,
+                  { filter: "blur(8px)" },
+                  { filter: "blur(0px)", duration: 0.5, ease: "power2.inOut" }
+                );
+              }
             }
           },
           `step${percentage}`
         );
 
-        // Ocultar imagen anterior después de revelar la actual
+        // Hide previous image after current one is revealed
         if (index > 0) {
-          this.mainTl.to(
+          mainTl.to(
             wrappers[index - 1],
             {
               clipPath: "inset(100% 0 0 0)",
@@ -257,8 +282,8 @@ export default {
         }
       });
 
-      // Ocultar líneas de texto antes de la fase final
-      this.mainTl.to(
+      // Animate text lines out before final phase
+      mainTl.to(
         ".text-line",
         {
           opacity: 0,
@@ -269,12 +294,12 @@ export default {
         "step99+=1"
       );
 
-      // Fase final: expandir imagen final y animar overlay
-      this.mainTl.add("expandFinal", ">");
-      this.mainTl.to({}, { duration: 0.5 }, "expandFinal");
+      // Final phase
+      mainTl.add("expandFinal", ">");
+      mainTl.to({}, { duration: 0.5 }, "expandFinal");
 
-      // Expandir contenedor de imagen a pantalla completa
-      this.mainTl.to(
+      // Expand image container to full screen
+      mainTl.to(
         imageContainer,
         {
           width: "100vw",
@@ -285,19 +310,21 @@ export default {
         "expandFinal+=0.5"
       );
 
-      // Escalar imagen final
-      this.mainTl.to(
-        finalImage,
-        {
-          scale: 1.0,
-          duration: 1.2,
-          ease: "gentleIn"
-        },
-        "expandFinal+=0.5"
-      );
+      // Scale final image
+      if (finalImage) {
+        mainTl.to(
+          finalImage,
+          {
+            scale: 1.0,
+            duration: 1.2,
+            ease: "gentleIn"
+          },
+          "expandFinal+=0.5"
+        );
+      }
 
-      // Fundido de porcentaje
-      this.mainTl.to(
+      // Fade out percentage
+      mainTl.to(
         percentageElement,
         {
           opacity: 0,
@@ -308,8 +335,8 @@ export default {
         "expandFinal+=0.5"
       );
 
-      // Mostrar header con animación escalonada
-      this.mainTl.to(
+      // Show header with staggered animation
+      mainTl.to(
         ".logo-left",
         {
           opacity: 1,
@@ -320,8 +347,8 @@ export default {
         "expandFinal+=1.2"
       );
 
-      // Animación escalonada para elementos del nav center
-      this.mainTl.to(
+      // Staggered animation for nav center items
+      mainTl.to(
         ".nav-center li",
         {
           opacity: 1,
@@ -333,8 +360,8 @@ export default {
         "expandFinal+=1.3"
       );
 
-      // Animación para nav right
-      this.mainTl.to(
+      // Animation for nav right
+      mainTl.to(
         ".nav-right",
         {
           opacity: 1,
@@ -345,8 +372,8 @@ export default {
         "expandFinal+=1.7"
       );
 
-      // Mostrar líneas de texto finales
-      this.mainTl.to(
+      // Animate in the final text lines
+      mainTl.to(
         ".text-container-final",
         {
           opacity: 1,
@@ -355,7 +382,7 @@ export default {
         "expandFinal+=1.5"
       );
 
-      this.mainTl.to(
+      mainTl.to(
         ".text-line-final",
         {
           opacity: 1,
@@ -367,8 +394,8 @@ export default {
         "expandFinal+=1.6"
       );
 
-      // Mostrar botón de reinicio
-      this.mainTl.to(
+      // Show restart button
+      mainTl.to(
         ".restart-btn",
         {
           opacity: 1,
@@ -379,23 +406,20 @@ export default {
         "expandFinal+=1.2"
       );
 
-      // Cambiar opacidad del fondo del preloader durante la transición
-      this.mainTl.to(
+      // Change preloader background opacity
+      mainTl.to(
         ".preloader",
         {
           backgroundColor: "rgba(0,0,0,0.5)",
           duration: 0.5,
-          ease: "customEase",
-          onComplete: () => {
-            this.showPreloader = false;
-          }
+          ease: "customEase"
         },
         "expandFinal+=0.7"
       );
 
-      // Animación de aparición del texto hero (título grande)
-      this.mainTl.to(".big-title", { opacity: 1, duration: 0.1 }, "expandFinal+=1.8");
-      this.mainTl.to(
+      // Animate hero text (big title) appearance
+      mainTl.to(".big-title", { opacity: 1, duration: 0.1 }, "expandFinal+=1.8");
+      mainTl.to(
         ".big-title .title-line span",
         {
           y: "0%",
@@ -406,57 +430,19 @@ export default {
         },
         "expandFinal+=1.8"
       );
-    },
-    setupRestartButton() {
-      const restartBtn = document.querySelector(".restart-btn");
-      const additionalDots = document.querySelectorAll(".dot:nth-child(n+5)");
-      const centerDot = document.querySelector(".center-dot");
 
-      if (!restartBtn) return;
+      // Mark as loaded at the end of animation
+      mainTl.call(() => {
+        isLoaded.value = true;
+      }, [], "expandFinal+=2");
+    };
 
-      // Animaciones de hover para el botón de reinicio
-      restartBtn.addEventListener("mouseenter", () => {
-        // Mostrar 4 puntos adicionales
-        gsap.to(additionalDots, {
-          opacity: 1,
-          duration: 0.3,
-          stagger: 0.05,
-          ease: "customEase"
-        });
-
-        // Mostrar y escalar punto central
-        gsap.to(centerDot, {
-          opacity: 1,
-          scale: 1,
-          duration: 0.4,
-          ease: "gentleIn"
-        });
-      });
-
-      restartBtn.addEventListener("mouseleave", () => {
-        // Ocultar 4 puntos adicionales
-        gsap.to(additionalDots, {
-          opacity: 0,
-          duration: 0.3,
-          stagger: 0.05,
-          ease: "customEase"
-        });
-
-        // Ocultar y reducir punto central
-        gsap.to(centerDot, {
-          opacity: 0,
-          scale: 0,
-          duration: 0.4,
-          ease: "gentleIn"
-        });
-      });
-    },
-    restartAnimation() {
+    const restartAnimation = () => {
       gsap.killTweensOf("*");
 
-      // Restablecer estado inicial
-      this.showPreloader = true;
-      this.currentPercentage = 0;
+      // Reset preloader overlay to initial state
+      gsap.set(".preloader", { display: "flex", opacity: 1, y: 0 });
+      document.querySelector(".preloader")?.style.setProperty('background-color', '#000');
 
       const imageContainer = document.querySelector(".image-container");
       gsap.set(imageContainer, { width: "400px", height: "500px" });
@@ -465,10 +451,11 @@ export default {
       gsap.set(percentageElement, {
         filter: "blur(0px)",
         opacity: 1,
+        textContent: "0",
         left: "2rem"
       });
 
-      const wrappers = this.$refs.imageWrappers;
+      const wrappers = document.querySelectorAll(".image-wrapper");
       gsap.set(wrappers, {
         clipPath: "inset(100% 0 0 0)",
         visibility: "hidden",
@@ -476,7 +463,7 @@ export default {
         top: 0,
         left: 0
       });
-      gsap.set(wrappers[0], { visibility: "visible" });
+      if (wrappers[0]) gsap.set(wrappers[0], { visibility: "visible" });
 
       gsap.set(".image-wrapper img", {
         scale: 1.2,
@@ -493,17 +480,81 @@ export default {
       gsap.set(".text-line-final", { opacity: 0 });
       gsap.set(".text-container-final", { opacity: 0 });
 
-      document.querySelector(".preloader").style.display = "flex";
-      document.querySelector(".preloader").style.backgroundColor = "#000";
+      isLoaded.value = false;
+      currentPercentage.value = 0;
 
-      setTimeout(this.initAnimation, 100);
-    }
+      setTimeout(initAnimation, 100);
+    };
+
+    const setupButtonHover = () => {
+      const restartBtn = document.querySelector(".restart-btn");
+      const additionalDots = document.querySelectorAll(".dot:nth-child(n+5)");
+      const centerDot = document.querySelector(".center-dot");
+
+      if (restartBtn && additionalDots && centerDot) {
+        // Restart button hover animations
+        restartBtn.addEventListener("mouseenter", () => {
+          // Show additional 4 dots
+          gsap.to(additionalDots, {
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.05,
+            ease: "customEase"
+          });
+
+          // Show and scale up center dot
+          gsap.to(centerDot, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.4,
+            ease: "gentleIn"
+          });
+        });
+
+        restartBtn.addEventListener("mouseleave", () => {
+          // Hide additional 4 dots
+          gsap.to(additionalDots, {
+            opacity: 0,
+            duration: 0.3,
+            stagger: 0.05,
+            ease: "customEase"
+          });
+
+          // Hide and scale down center dot
+          gsap.to(centerDot, {
+            opacity: 0,
+            scale: 0,
+            duration: 0.4,
+            ease: "gentleIn"
+          });
+        });
+      }
+    };
+
+    onMounted(() => {
+      setTimeout(() => {
+        initAnimation();
+        setupButtonHover();
+      }, 100);
+    });
+
+    return {
+      isLoaded,
+      currentPercentage,
+      textLineOpacity,
+      images,
+      preloaderLines,
+      finalLines,
+      titleLines,
+      navItems,
+      restartAnimation
+    };
   }
-};
+});
 </script>
 
 <style scoped>
-/* Estilos copiados del código original */
+/* Your CSS styles here (same as in your original code) */
 @font-face {
   src: url("https://fonts.cdnfonts.com/css/pp-neue-montreal") format("woff2");
   font-family: "PP Neue Montreal", sans-serif;
