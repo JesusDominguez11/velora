@@ -26,7 +26,7 @@
     </div>
 
     <!-- Text Lines Container (Preloader) -->
-    <div class="text-container">
+    <!-- <div class="text-container">
       <div class="text-line">Winning is a habit.</div>
       <div class="text-line">Champions are made daily.</div>
       <div class="text-line">Obstacles fuel growth.</div>
@@ -35,10 +35,10 @@
       <div class="text-line">Greatness never rests.</div>
       <div class="text-line">Victory is earned.</div>
       <div class="text-line">Persistence prevails.</div>
-    </div>
+    </div> -->
 
     <!-- Text Lines Container (Final) -->
-    <div class="text-container-final">
+    <!-- <div class="text-container-final">
       <div class="text-line-final">Embrace the challenge.</div>
       <div class="text-line-final">Find your purpose.</div>
       <div class="text-line-final">Commit to excellence.</div>
@@ -47,7 +47,7 @@
       <div class="text-line-final">Rise above fear.</div>
       <div class="text-line-final">Own your destiny.</div>
       <div class="text-line-final">Leave a legacy.</div>
-    </div>
+    </div> -->
 
     <!-- Hero Text (Big Title) -->
     <!-- <div class="big-title">

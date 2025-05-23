@@ -40,9 +40,12 @@ import { defineComponent, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 
 // Importación directa de imágenes
-import nissanGtr from '@/assets/images/nissan_gtr.jpeg'
-import toyotaMr2 from '@/assets/images/toyota_mr2.jpg'
-import nissan300zx from '@/assets/images/nissan_300zx_1.jpg'
+// import nissanGtr from '@/assets/images/nissan_gtr.jpeg'
+import toyotaMr2 from '@/assets/images/toyota_mr2_0.jpg'
+import nissan300zx from '@/assets/images/nissan_300zx_0.jpg'
+import hondaNsx from '@/assets/images/honda_nsx_0.jpg'
+import mitsu3000gt from '@/assets/images/mitsubishi_3000gt_2.jpg'
+import toyotaSupra from '@/assets/images/toyota_supra_7.jpg'
 
 export default defineComponent({
   name: 'HeroSection',
@@ -52,9 +55,11 @@ export default defineComponent({
 
     // Array con las imágenes importadas
     const images = [
-      nissanGtr,
+      nissan300zx,
+      hondaNsx,
+      toyotaSupra,
       toyotaMr2,
-      nissan300zx
+      mitsu3000gt,
     ];
 
     const particleStyle = (i: number) => {
@@ -214,7 +219,7 @@ export default defineComponent({
   margin: 0 auto;
   color: white;
   text-align: left;
-  padding-left: 10%;
+  // padding-left: 10%;
 }
 
 .brand-name {
